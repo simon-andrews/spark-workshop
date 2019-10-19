@@ -4,8 +4,6 @@ import static spark.Spark.*;
 
 public class App {
   public static void main(String[] args) {
-    get("/hello/:name", (request, response) -> {
-      return "Hello, " + request.params(":name");
-    });
+    get("/:n/:op/:m", (request, response) -> request.params(":n"));
   }
 }
