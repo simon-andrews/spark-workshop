@@ -1,0 +1,113 @@
+\section{Improving the calculator}
+
+\begin{frame}{Problems with the old system}
+\begin{itemize}
+    \item It's ugly.
+    \item Terrible user experience.
+    \item No one uses the Internet this way.
+\end{itemize}
+(It might be nice as an API though!)
+\end{frame}
+
+\begin{frame}{What's the real solution?}
+\begin{itemize}
+    \item Wouldn't it be better if the user could just fill out a form, click submit, and get their result? There would be no need to fiddle with URLs by hand.
+    \item Let's do exactly that!
+    \item HTML has some support for forms built in with the \texttt{<form>} tags.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Remember POST requests?}
+\begin{itemize}
+    \item We will replace our ``/:n/:op/:m'' endpoint with one single endpoint ``/''. This is your website's \textbf{root}, which \textit{basically} means it's what we get when we visit \url{http://localhost:4567} without specifying a resource.
+    \item / can be acted upon using two methods:
+    \begin{itemize}
+        \item When the client GETs /, they will receive a form asking them for a calculation.
+        \item When the client POSTs to / with some numbers and an operation, the server will do the requested computation and the client will receive the result.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{POSTing from a form}
+Here's what the HTML code for our form will look like:
+\begin{minted}{html}
+<form action="/" method="POST">
+  n: <input type="number" step="any" name="n" /> <br />
+  op:
+  <select name="op">
+    <option value="plus">+</option>
+    <option value="minus">-</option>
+    <option value="times">*</option>
+    <option value="div">/</option>
+  </select>
+  <br />
+  m: <input type="number" step="any" name="m" /> <br />
+  <input type="submit" value="Go!" />
+</form>
+\end{minted}
+\end{frame}
+
+\begin{frame}{What happens on the client side?}
+When the user clicks the ``Go!'' button in their web browser, the browser will make a POST request to / with string $n$, $op$, and $m$ as parameters.
+
+It is important to remember that \textit{these strings could be anything}, even though we try to constrain the user's input using HTML.
+\end{frame}
+
+\begin{frame}[fragile]{What happens on the server side?}
+We need to tell Spark how to handle these new request types. Let's try a simple example first. Replace App.java with:
+\begin{minted}{java}
+package org.simonandrews.sparktutorial;
+
+import static spark.Spark.*;
+
+public class App {
+  public static void main(String[] args) {
+    get("/", (req, res) ->
+        "You did a GET!" +
+        "<form action=\"/\" method=\"POST\">" +
+        "<input type=\"submit\" value=\"Now POST!\"/>" +
+        "</form>");
+    post("/", (req, res) -> "You did a POST!");
+  }
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}{What just happened?}
+\begin{itemize}
+    \item We just defined two different methods for the same resource.
+    \item When you GET /, which is what your browser does by default, you see the message ``You did a GET!'' and a button.
+    \item When you POST /, which is what the form code tells your browser to do, you see the message ``You did a POST!''.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Now let's calculate!}
+\begin{minted}{java}
+// omitted...
+String form = "<form action=\"/\" method=\"POST\">" +
+              // omitted
+              "</form>";
+get("/", (req, res) -> form);
+post("/", (req, res) -> {
+  double n = Double.parseDouble(req.queryParams("n"));
+  double m = Double.parseDouble(req.queryParams("m"));
+  switch (req.queryParams("op")) {
+    case "plus":  return String.valueOf(n + m);
+    case "minus": return String.valueOf(n - m);
+    case "times": return String.valueOf(n * m);
+    case "div":   return String.valueOf(n / m);
+    default:      return "oops!";
+  }
+});
+// omitted...
+\end{minted}
+\end{frame}
+
+\begin{frame}{Try it out!}
+\begin{itemize}
+    \item As usual, \texttt{./gradlew build} and \texttt{java -jar build/libs/spark-tutorial.jar}.
+    \item Open \url{http://localhost:4567} in your browser.
+    \item Fill out the form and click submit.
+    \item Get your answer! Hooray, an interactive site!
+\end{itemize}
+\end{frame}

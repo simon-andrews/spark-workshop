@@ -1,0 +1,122 @@
+\section{Templates}
+
+\begin{frame}{The problem}
+\begin{itemize}
+    \item Baking HTML into Java code is terrible.
+    \item You need to escape all your quotes.
+    \item You need to keep track of all the strings you're concatenating.
+    \item You editor doesn't understand you're writing HTML, so you won't get autocompletion or syntax highlighting.
+    \item What should your indenting rules even be?
+    \item What about CSS? What about JavaScript?
+    \item What about long HTML documents?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The solution}
+Separate your front-end from your back-end!
+\begin{itemize}
+    \item We will do this with \textbf{templates}, files that have spaces you can fill in dynamically.
+    \item Basically, we can make a template ``\$n \$op \$m = \$result'' and then render it once we know the values for all those variables.
+    \item We can do this in a separate file, and include that file in our JAR along with all our .classes. (Remember the resources directory from earlier?)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Introducing Velocity!}
+
+\begin{center}
+\includesvg[width=20em]{resources/velocity_logo.svg}
+\end{center}
+\begin{itemize}
+    \item Velocity is a library for rendering templates. It has its own template language designed specifically to work nice with Java programs.
+    \item We won't use them today, but you can use for-loops and if-statements in it too. Velocity is very flexible!
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Adding the dependency}
+
+In build.gradle, change the \texttt{dependencies} section to
+\begin{minted}[fontsize=\footnotesize]{groovy}
+dependencies {
+  implementation 'com.sparkjava:spark-core:2.9.1'
+  implementation 'com.sparkjava:spark-template-velocity:2.7.1'
+}
+\end{minted}
+This adds a dependency on an adapter for Velocity that makes it work nicely with Spark.
+\end{frame}
+
+\begin{frame}{Building our first template}
+\begin{itemize}
+    \item Files in the ``src/main/resources'' will be included in your JAR without any modification.
+    \item Your Java code can then access those files.
+    \item This is where we'll be putting our templates.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Adding our templates}
+Put the following in src/main/resources/form.vtl:
+\begin{minted}{html}
+<form action="/" method="POST">
+  n: <input type="number" step="any" name="n" /> <br />
+  op:
+  <select name="op">
+    <option value="plus">+</option>
+    <option value="minus">-</option>
+    <option value="times">*</option>
+    <option value="div">/</option>
+  </select>
+  <br />
+  m: <input type="number" step="any" name="m" /> <br />
+  <input type="submit" value="Go!" />
+</form>
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Adding our templates}
+Put the following in src/main/resources/result.vtl:
+\begin{minted}{html}
+<p>The result of $n $op $m is $result.</p>
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Wiring up Spark}
+In App.java:
+\begin{minted}{java}
+import java.util.HashMap;
+import java.util.Map;
+import spark.ModelAndView;
+import spark.template.velocity.VelocityTemplateEngine;
+// omitted...
+get("/", (req, res) -> {
+    Map<String, Object> emptyModel = new HashMap<>();
+    return new ModelAndView(emptyModel, "form.vtl");
+}, new VelocityTemplateEngine());
+// TODO: post
+// omitted...
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{The POST part}
+\begin{minted}[fontsize=\footnotesize]{java}
+post("/", (req, res) -> {
+  String op = req.queryParams("op");
+  Double n = Double.parseDouble(req.queryParams("n"));
+  Double m = Double.parseDouble(req.queryParams("m"));
+  Double r;
+  switch (op) {
+    case "plus":  r = n + m; break;
+    case "minus": r = n - m; break;
+    case "times": r = n * m; break;
+    case "div":   r = n / m; break;
+    default:      throw new Exception("oops");
+  }
+  Map<String, Object> model = new HashMap<>();
+  model.put("n", n); model.put("m", m);
+  model.put("op", op); model.put("result", r);
+  return new ModelAndView(model, "result.vtl");
+}, new VelocityTemplateEngine());
+\end{minted}
+\end{frame}
+
+\begin{frame}{Voilà!}
+It works (hopefully)! Go you!
+\end{frame}

@@ -1,0 +1,43 @@
+\section{Welcome!}
+
+\begin{frame}[fragile]{A taste of Spark: ``Hello, World!''}
+\begin{minted}{java}
+import static spark.Spark.*;
+
+public class App {
+    public static void main(String[] args) {
+        get("/hello", (req, res) -> "Hello World");
+    }
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}{Who is this workshop for?}
+\begin{itemize}
+    \item This workshop was \textit{designed} for students and recent graduates of COMPSCI 121/186/187 at UMass who want to make something useful with their new Java skills.
+    \item This workshop will \textit{probably be useful} to anyone with any programming experience in any language.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Before we get started}
+Do you have a copy of the Java Development Kit (JDK) installed?
+
+Open a terminal and try to run ``javac''.
+\begin{itemize}
+    \item If you get a whole bunch of lines, you're set.
+    \item If you get something about javac not being found, you'll need a copy of the JDK. Visit \url{https://adoptopenjdk.net/} and grab yourself a copy!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What's the plan for today?}
+\begin{center}
+    \includesvg[width=10em]{resources/spark_logo.svg}
+\end{center}
+In one hour we will:
+\begin{itemize}
+    \item Give a whirlwind introduction to HTTP and Gradle.
+    \item Build a ``hello world'' website.
+    \item Build a super bare-bones calculator application.
+    \item Flesh out our calculator application a bit so it's more like a project you would actually make.
+\end{itemize}
+\end{frame}

@@ -1,0 +1,35 @@
+\section{``Hello, World!'' revisited}
+
+\begin{frame}[fragile]{``Hello, World!'' again}
+\begin{minted}{java}
+package org.simonandrews.sparktutorial;
+
+import static spark.Spark.*;
+
+public class App {
+    public static void main(String[] args) {
+        get("/hello", (req, res) -> "Hello World");
+    }
+}
+\end{minted}
+\pause
+Replace the code in \texttt{src/main/org/simonandrews/ sparktutorial/App.java} with this, then \texttt{./gradlew build}!
+\end{frame}
+
+\begin{frame}{Let's run it}
+\begin{itemize}
+    \item \texttt{java -jar build/libs/spark-tutorial.jar}
+    \item If all you get is some complaining about ``SLF4J'' you did it right!
+    \item Point your web browser to \url{http://localhost:4567/hello}. You should see a ``Hello, World!'' message.
+    \item Stop the program by doing ``Ctrl-C'' in your terminal.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What just happened?}
+\begin{enumerate}
+    \item When you ran the application with \texttt{java}, you started an HTTP server on your computer.
+    \item The web server listen for connections on \texttt{port} 4567.
+    \item When you connect to \url{http://localhost:4567/hello}, your web browser makes a GET request for the resource /hello on the server.
+    \item The server matches your request to a function that generates a string, then sends that string back to your browser.
+\end{enumerate}
+\end{frame}

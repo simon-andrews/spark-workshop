@@ -1,0 +1,61 @@
+\section{HTTP crash course}
+
+\begin{frame}{What is HTTP?}
+\begin{itemize}
+    \item \textbf{H}yper\textbf{t}ext \textbf{T}ransfer \textbf{P}rotocol is a system for exchanging documents.
+    \item Every HTTP request is an interaction between a \textbf{client} and a \textbf{server} using some \textbf{method} on a \textbf{resource}.
+    \item This is what you use when you connect to websites using your web browser (\textit{http://}www.example.org).
+    \item (HTTPS is an extension of HTTP that encrypts your traffic.)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{An ``HTTP conversation''}
+\begin{tabular}{l r}
+\textbf{Client}         & \textbf{Server}                     \\ \hline
+                        & ``Anyone out there?''        \pause \\
+``GET /profile''        &                              \pause \\
+                        & ``200 OK: name=Jim, age=20'' \pause \\
+``POST /update age=21'' &                              \pause \\
+                        & ``401 Forbidden''
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Common HTTP request types}
+\begin{itemize}
+    \item GET: used to retrieve a resource from a server.
+    \item POST: used to send data to a server to create/update a resource.
+    \item Other less common request types: PUT, HEAD, DELETE, PATCH, OPTIONS
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Common HTTP response codes}
+\begin{itemize}
+    \item 2XX: success messages
+    \begin{itemize}
+        \item \textbf{200 OK:} Basically, everything went fine.
+    \end{itemize}
+    \item 3XX: redirection messages
+    \begin{itemize}
+        \item \textbf{301 Moved Permanently:} The requested resource is no longer at this address.
+    \end{itemize}
+    \item 4XX: client error messages
+    \begin{itemize}
+        \item \textbf{400 Bad Request:} Catch-all ``you messed up'' response.
+        %\item \textbf{403 Forbidden:} Client does not have permission to access the requested resource.
+        \item \textbf{404 Not Found:} The requested resource does not exist.
+    \end{itemize}
+    \item 5XX: server error messages
+    \begin{itemize}
+        \item \textbf{500 Internal Server Error:} Catch-all ``I messed up'' response.
+    \end{itemize}
+\end{itemize}
+Comprehensive reference: \url{https://httpstatuses.com/}.
+\end{frame}
+
+\begin{frame}{So what?}
+\begin{itemize}
+    \item The application we will write will act as a HTTP server.
+    \item The framework we'll be using, Spark, is actually just a nice frontend to Jetty, an HTTP server.
+    \item When we run our program, it will make available an HTTP server we can connect to.
+\end{itemize}
+\end{frame}

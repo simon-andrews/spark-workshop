@@ -1,0 +1,93 @@
+\section{Building a calculator}
+
+\begin{frame}{Your mission}
+\begin{itemize}
+    \item ``Hello, World!'' is boring. Let's build something that can interact with the user.
+    \item In this workshop, we'll be building a four function ($+$, $-$, $\times$, $\div$) calculator.
+    \item Our interface will work like this: for every operation, \url{http://localhost:4567/n/op/m} will display the result of applying the operation \textit{op} to the operands \textit{n} and \textit{m}.
+    \item For example, \url{http://localhost:4567/4/plus/2} will display 6.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{GET requests with parameters}
+\begin{itemize}
+    \item Programming \texttt{/0/plus/0}, \texttt{/0/plus/1}, \texttt{/0/plus/2}, etc. would take a pretty long time.
+    \item Luckily, we can tell Spark to look for patterns in the requested resources and interpret them.
+    \item We can make a route that looks like ``$n$/$op$/$m$'', then in the function for the route we can work with those values.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Introducing the calculator!}
+Update App.java:
+\begin{minted}{java}
+package org.simonandrews.sparktutorial;
+
+import static spark.Spark.*;
+
+public class App {
+  public static void main(String[] args) {
+    get("/:n/:op/:m", (req, res) -> "TODO");
+  }
+}
+\end{minted}
+Try compiling and running this program and accessing some URLs with your web browser. What works? What doesn't?
+\end{frame}
+
+\begin{frame}{URL parameters with Spark}
+\begin{itemize}
+    \item ``:n'', ``:op'', and ``:m'' are allowed to be any string.
+    \item Our next step will be to make sure that they're what we expect them to be.
+    \item This is super important:
+    \begin{itemize}
+        \item Makes sure our application behaves the way we expect it to.
+        \item For a ``real world'' application, this might be important for security as well.
+    \end{itemize}
+\end{itemize}
+\begin{center}
+\includegraphics[width=15em]{resources/xkcd_327.png} \\
+\textit{Comic by Randall Munroe of xkcd: \url{https://www.xkcd.com/327/}}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Playing with parameters}
+We can get the value of a URL parameter with the request object's \texttt{param} method:
+\begin{minted}{java}
+package org.simonandrews.sparktutorial;
+
+import static spark.Spark.*;
+
+public class App {
+  public static void main(String[] args) {
+    get("/:n/:op/:m", (req, res) -> req.params(":n"));
+  }
+}
+\end{minted}
+Now every request will return whatever $n$ was. For example, \url{http://localhost:4567/1/plus/3} will display 1.
+\end{frame}
+
+\begin{frame}[fragile]{Doing the computation}
+With that in our toolkit, let's build out our function a bit:
+\begin{minted}{java}
+//omitted...
+get("/:n/:op/:m", (req, res) -> {
+  double n = Double.parseDouble(req.params(":n"));
+  double m = Double.parseDouble(req.params(":m"));
+  switch (req.params(":op")) {
+    case "plus":  return String.valueOf(n + m);
+    case "minus": return String.valueOf(n - m);
+    case "times": return String.valueOf(n * m);
+    case "div":   return String.valueOf(n / m);
+    default:      return "oops!";
+  }
+});
+//omitted...
+\end{minted}
+    
+\end{frame}
+
+\begin{frame}{Try it out!}
+\begin{itemize}
+    \item As usual, \texttt{./gradlew build} and \texttt{java -jar build/libs/spark-tutorial.jar}!
+    \item Try your operations out. For example, what's displayed when you visit \url{http://localhost:4567/1/minus/0.5}?
+\end{itemize}
+\end{frame}

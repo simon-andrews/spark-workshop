@@ -1,0 +1,38 @@
+\documentclass[handout]{beamer}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{minted}
+\usepackage{svg}
+\usepackage{tabularx}
+
+\graphicspath{ {./resources} }
+
+\title{Spark Tutorial: Building Web Applications with Java}
+\author{Simon Andrews}
+\date{HackUMass VII}
+
+\AtBeginSection[]
+{
+    \begin{frame}{Table of Contents}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\setbeamercovered{invisible}
+
+\begin{document}
+
+\maketitle
+
+\input{intro.tex}
+\input{http_crash_course.tex}
+\input{gradle.tex}
+\input{hello_world_revisited.tex}
+\input{building_a_calculator.tex}
+\input{improving_the_calculator.tex}
+\input{templates.tex}
+\input{recap.tex}
+
+\end{document}

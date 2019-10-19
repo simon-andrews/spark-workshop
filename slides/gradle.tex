@@ -1,0 +1,114 @@
+\section{Gradle crash course}
+
+\begin{frame}{But before we start with that\dots}
+\begin{itemize}
+    \item We're in the hands-on portion now!
+    \item Go to \textit{some URL} and download and extract the ``stage 0'' ZIP file.
+    \item Next, fire up a terminal and \texttt{cd} over to the folder you just extracted.
+\end{itemize}    
+\end{frame}
+
+\begin{frame}{What is Gradle?}
+%\begin{center}
+%    \includesvg[width=10em]{resources/maven_logo.svg}
+%\end{center}
+\begin{itemize}
+    \item Gradle is a \textbf{build automation} tool popular with Java developers.
+    \item Gradle's main jobs are to
+    \begin{itemize}
+        \item manage your project's \textbf{dependencies}, and
+        \item control building your project's \textbf{artifacts}.
+    \end{itemize}
+    \item Learn more: \url{https://gradle.org}
+\end{itemize}    
+\end{frame}
+
+\begin{frame}{Why should you care?}
+\begin{itemize}
+    \item Gradle can be used by anyone in pretty much any workflow.
+%    \begin{itemize}
+%        \item Not everyone uses Eclipse and can just push the little green ``run'' button.
+%        \item Sometimes non-humans will want to build your program (mostly continuous integration servers)
+%    \end{itemize}
+    \item Gradle helps you share your code and use code other people shared with you.
+%    \begin{itemize}
+%        \item Gradle encourages you to structure your code in a standardized way, and helps you produce binaries you can easily share with others.
+%        \item Gradle helps you download other people's code from the Internet and use it in your own projects.
+%    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{How to control Gradle: build.gradle}
+Here's what a minimal build.gradle looks like for a Java project.
+\begin{minted}{groovy}
+plugins {
+  id 'java'
+}
+\end{minted}
+It can be this small because Gradle makes a lot assumptions about your project's structure.
+\end{frame}
+
+\begin{frame}{Organizing your sources for Gradle}
+\begin{itemize}
+    \item src/ -- Source code
+    \begin{itemize}
+        \item main/ -- Application code
+        \begin{itemize}
+            \item java/ -- Java source code
+            \item resources/ -- Other files (configuration, data, etc.)
+        \end{itemize}
+        \item test/ -- Unit tests
+    \end{itemize}
+    \item build.gradle -- Instructions for building your project
+    \item settings.gradle -- Extra configuration stuff for Gradle
+\end{itemize}
+You can see some of these in the project from the stage 0 ZIP.
+\end{frame}
+
+\begin{frame}[fragile]{Adding dependencies to build.gradle}
+\begin{minted}{groovy}
+plugins {
+  id 'java'
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  implementation 'com.sparkjava:spark-core:2.9.1'
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{About JARs}
+A \textbf{JAR} file (\textbf{J}ava \textbf{AR}chive) is a container that you can put compiled Java code (+ other stuff) into one neat runnable package.
+\begin{minted}{groovy}
+jar {
+  manifest {
+    attributes(
+      'Main-Class':
+        'org.simonandrews.sparktutorial.App'
+    )
+  }
+  from {
+    configurations.runtimeClasspath.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }
+  }
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}{Actually using Gradle}
+\begin{itemize}
+    \item From build.gradle, Gradle defines \textbf{targets}, actions you can run.
+    \item You can run these from the command line: ./gradlew \textit{sometarget}.
+    \item Try it:
+    \begin{itemize}
+        \item Build: \texttt{./gradlew build}
+        \item Run: \texttt{java -jar build/libs/spark-tutorial.jar}
+    \end{itemize}
+    \item Using Eclipse? Run \texttt{./gradlew eclipse} to turn your directory into an Eclipse project, then import it!
+\end{itemize}
+\end{frame}
