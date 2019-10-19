@@ -1,0 +1,23 @@
+plugins {
+  id 'eclipse'
+  id 'java'
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  implementation 'com.sparkjava:spark-core:2.9.1'
+}
+
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'org.simonandrews.sparktutorial.App'
+    )
+  }
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
